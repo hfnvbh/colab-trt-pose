@@ -8,6 +8,8 @@ import torch
 import torch2trt
 from torch2trt import TRTModule
 
+import trt_pose
+import trt_pose.coco
 from trt_pose.draw_objects import DrawObjects
 from trt_pose.parse_objects import ParseObjects
 
@@ -42,7 +44,7 @@ def preprocess(image):
 parse_objects = ParseObjects(topology)
 draw_objects = DrawObjects(topology)
 
-cam = cv2.VideoCapture('youtube.mp4')
+cam = cv2.VideoCapture(sys.argv[1])
 output = cv2.VideoWriter('output.avi', cv2.VideoWriter_fourcc(*'XVID'),
                          int(cam.get(cv2.CAP_PROP_FPS)), 
                          (int(cam.get(cv2.CAP_PROP_FRAME_WIDTH)), int(cam.get(cv2.CAP_PROP_FRAME_HEIGHT))))
@@ -54,7 +56,6 @@ def execute(image):
     counts, objects, peaks = parse_objects(cmap, paf)#, cmap_threshold=0.15, link_threshold=0.15)
     draw_objects(image, counts, objects, peaks)
     return image
-
 
 ret,img = cam.read()
 while(ret):
