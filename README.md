@@ -1,4 +1,4 @@
-# Pose estimation with trt-pose Google Colab
+# Pose estimation with trt-pose in Google Colab
 
 Simple demo for pose estimation with trt-pose in Google Colab. [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/hfnvbh/colab-trt-pose/blob/master/trt-pose.ipynb)
 
