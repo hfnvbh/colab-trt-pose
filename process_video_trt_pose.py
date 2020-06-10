@@ -1,4 +1,6 @@
+import sys
 import json
+import time
 import torch
 
 import torch2trt
@@ -40,11 +42,6 @@ def preprocess(image):
 parse_objects = ParseObjects(topology)
 draw_objects = DrawObjects(topology)
 
-cam = cv2.VideoCapture(sys.argv[1])
-output = cv2.VideoWriter('output.avi', cv2.VideoWriter_fourcc(*'XVID'),
-                         int(cam.get(cv2.CAP_PROP_FPS)), 
-                         (int(cam.get(cv2.CAP_PROP_FRAME_WIDTH)), int(cam.get(cv2.CAP_PROP_FRAME_HEIGHT))))
-
 def execute(image):
     data = preprocess(image)
     cmap, paf = model_trt(data)
@@ -53,8 +50,26 @@ def execute(image):
     draw_objects(image, counts, objects, peaks)
     return image
 
+cam = cv2.VideoCapture(sys.argv[1])
+
+i=0;
+images=[]
 ret,img = cam.read()
 while(ret):
-    imag = execute(img)
-    output.write(imag)
+    images.append(img)
     ret,img = cam.read()
+    i=i+1
+
+processed_images=[]
+timer = -time.perf_counter()
+for img in images:
+    processed_images.append(execute(img))
+
+timer = timer+time.perf_counter()
+print("FPS:",i/timer)
+
+output = cv2.VideoWriter('output.avi', cv2.VideoWriter_fourcc(*'XVID'),
+                         int(cam.get(cv2.CAP_PROP_FPS)), 
+                         (int(cam.get(cv2.CAP_PROP_FRAME_WIDTH)), int(cam.get(cv2.CAP_PROP_FRAME_HEIGHT))))
+for img in processed_images:
+    output.write(img)
