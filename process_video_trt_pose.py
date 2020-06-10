@@ -1,7 +1,3 @@
-import sys
-sys.path.append('trt_pose')
-sys.path.append('torch2trt/torchtrt')
-
 import json
 import torch
 
